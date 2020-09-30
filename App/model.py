@@ -51,19 +51,18 @@ def newAnalyzer():
                 'dateIndex': None
                 }
 
-    analyzer['accidents'] = lt.newList('SINGLE_LINKED', compareIds)
+    analyzer['accidents'] = lt.newList('SINGLE_LINKED', greaterFunction)
     analyzer['dateIndex'] = om.newMap(omaptype='BST',
-                                      comparefunction=compareDates)
+                                      comparefunction=greaterFunction)
     return analyzer
 
 # Funciones para agregar informacion al catalogo
 
-def addaccident(analyzer, accidents):
+def addaccident(analyzer, accident):
     """
     """
-    lt.addLast(analyzer['accidents'], accidents)
-    #lt.addFirst(analyzer['accidents'], accidents)
-    updateDateIndex(analyzer['dateIndex'], accidents)
+    lt.addLast(analyzer['accidents'], accident)
+    updateDateIndex(analyzer['dateIndex'], accident)
     return analyzer
 
 def updateDateIndex(map, accident):
@@ -75,41 +74,18 @@ def updateDateIndex(map, accident):
     Si no se encuentra creado un nodo para esa fecha en el arbol
     se crea y se actualiza el indice de tipos de crimenes
     """
-    occurreddate = accident['Start_Time']
-    accidentdate = datetime.datetime.strptime(occurreddate, '%Y-%m-%d %H:%M:%S')
-    entry = om.get(map, accidentdate.date())
+    accidentdate = accident['Start_Time'][:10]
+    # accidentdate2 = accident['End_Time'][:10]
+    entry = om.get(map, accidentdate)
     if entry == None:
         lst=lt.newList()
     else:
         lst=me.getValue(entry)
     lt.addLast(lst,accident)
-    #lt.addFirst(lst,accident)
-
-    om.put(map, accidentdate.date(), lst)
-    
-    #addDateIndex(datentry, accident)
+    # if accidentdate != accidentdate2:
+        # om.put(map,accidentdate2,lst)
+    om.put(map, accidentdate, lst)
     return map
-
-
-# def addDateIndex(datentry, accident):
-#     """
-#     Actualiza un indice de tipo de crimenes.  Este indice tiene una lista
-#     de crimenes y una tabla de hash cuya llave es el tipo de crimen y
-#     el valor es una lista con los crimenes de dicho tipo en la fecha que
-#     se está consultando (dada por el nodo del arbol)
-#     """
-#     lst = datentry['lstaccident']
-#     lt.addLast(lst, accident)
-#     offenseIndex = datentry['offenseIndex']
-#     offentry = m.get(offenseIndex, crime['OFFENSE_CODE_GROUP'])
-#     if (offentry is None):
-#         entry = newOffenseEntry(crime['OFFENSE_CODE_GROUP'], crime)
-#         lt.addLast(entry['lstoffenses'], crime)
-#         m.put(offenseIndex, crime['OFFENSE_CODE_GROUP'], entry)
-#     else:
-#         entry = me.getValue(offentry)
-#         lt.addLast(entry['lstoffenses'], crime)
-#     return datentry
 
 def newDataEntry(crime):
     """
@@ -119,19 +95,9 @@ def newDataEntry(crime):
     entry = {'offenseIndex': None, 'lstaccidents': None}
     entry['offenseIndex'] = m.newMap(numelements=30,
                                      maptype='PROBING',
-                                     comparefunction=compareOffenses)
-    entry['lstaccidents'] = lt.newList('SINGLE_LINKED', compareDates)
+                                     comparefunction=greaterFunction)
+    entry['lstaccidents'] = lt.newList('SINGLE_LINKED', greaterFunction)
     return entry
-
-def newOffenseEntry(offensegrp, crime):
-    """
-    Crea una entrada en el indice por tipo de crimen, es decir en
-    la tabla de hash, que se encuentra en cada nodo del arbol.
-    """
-    ofentry = {'offense': None, 'lstoffenses': None}
-    ofentry['offense'] = offensegrp
-    ofentry['lstoffenses'] = lt.newList('SINGLELINKED', compareOffenses)
-    return ofentry
 
 # ==============================
 # Funciones de consulta
@@ -140,43 +106,18 @@ def newOffenseEntry(offensegrp, crime):
 def keyset(map):
     return m.keySet(map)
 
+def getKey(tree,key):
+    return me.getValue(om.get(tree,key))
+
 # ==============================
 # Funciones de Comparacion
 # ==============================
-def compareIds(id1, id2):
-    """
-    Compara dos crimenes
-    """
-    if (id1 == id2):
-        return 0
-    elif id1 > id2:
+
+def greaterFunction(el1,el2):
+    if el1 > el2:
         return 1
-    else:
+    elif el1 < el2:
         return -1
+    return 0 
 
 
-def compareDates(date1, date2):
-    """
-    Compara dos ids de libros, id es un identificador
-    y entry una pareja llave-valor
-    """
-    if (date1 == date2):
-        return 0
-    elif (date1 > date2):
-        return 1
-    else:
-        return -1
-
-
-def compareOffenses(offense1, offense2):
-    """
-    Compara dos ids de libros, id es un identificador
-    y entry una pareja llave-valor
-    """
-    offense = me.getKey(offense2)
-    if (offense1 == offense):
-        return 0
-    elif (offense1 > offense):
-        return 1
-    else:
-        return -1

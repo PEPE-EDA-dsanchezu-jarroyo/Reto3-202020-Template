@@ -40,22 +40,28 @@ operación seleccionada.
 
 
 accidentsfile = 'us_accidents_dis_2019.csv'
+# accidentsfile = 'us_accidents_small.csv'
 
 # _________________________________________________us_accidents_small.csv__
 #  Menu principal
 # ___________________________________________________
 
+def printIndividualDayAccident(result):
+    print("Severidad de accidentes en:",date)
+    allAccidents = 0
+    for severity in result:
+        allAccidents += result[severity]
+        print(severity+":",result[severity])
+    print("Cantidad de accidentes:",allAccidents)
 
 def printMenu():
     print("\n")
-    print("*******************************************")
     print("Bienvenido")
     print("1- Inicializar Analizador")
     print("2- Cargar información de accidentes")
     print("3- Requerimento 1")
     print("4- Requerimento 2")
     print("0- Salir")
-    print("*******************************************")
 
 
 """
@@ -74,17 +80,17 @@ while True:
         t1=time.process_time()
         print("\nCargando información de crimenes ....")
         controller.loadData(cont, accidentsfile)
-        # print('Crimenes cargados: ' + str(controller.crimesSize(cont)))
-        # print('Altura del arbol: ' + str(controller.indexHeight(cont)))
-        # print('Elementos en el arbol: ' + str(controller.indexSize(cont)))
-        # print('Menor Llave: ' + str(controller.minKey(cont)))
-        # print('Mayor Llave: ' + str(conPtroller.maxKey(cont)))
-        print("ya acabo esa joda")
         t2=time.process_time()
-        print(t2-t1)
+        print('\n',t2-t1)
 
     elif int(inputs[0]) == 3:
-        print("\nBuscando crimenes en un rango de fechas: ")
+        print("\nBuscando accidentes en una fecha:")
+        date = input('Por favor ingrese la fecha de la cuál desea buscar los accidentes: (YYYY-MM-DD)\n')
+        try:
+            severity = controller.filterSeverityIndividual(cont['dateIndex'],date)
+            printIndividualDayAccident(severity)
+        except KeyError or TypeError:
+            print("No se encontró la llave")
 
 
     elif int(inputs[0]) == 4:
