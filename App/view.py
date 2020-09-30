@@ -94,8 +94,19 @@ while True:
 
 
     elif int(inputs[0]) == 4:
-        print("\nRequerimiento No 1 del reto 3: ")
-
+        print("\nBuscando accidentes antes de una fecha: ")
+        date = input('Por favor ingrese la fecha de la cuál desea buscar los accidentes: (YYYY-MM-DD)\n')
+        result = controller.accidentBeforeDate(cont['dateIndex'],date)
+        # print(result[1])
+        if result is not None:
+            print("El total de accidentes antes el",date,"es:",result[0])
+            maxim = (0,0)
+            for i in result[1]:
+                if result[1][i] > maxim[1]:
+                    maxim = (i,result[1][i])
+            print("Día con más atentados:","{:<12}{:<1}".format(maxim[0]+' -> ',maxim[1]),"atentados")
+        else:
+            print("No existen pa esa fecha")
     else:
         sys.exit(0)
 sys.exit(0)

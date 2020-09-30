@@ -109,6 +109,22 @@ def keyset(map):
 def getKey(tree,key):
     return me.getValue(om.get(tree,key))
 
+def minKey(tree):
+    return om.minKey(tree)
+
+def maxKey(tree):
+    return om.maxKey(tree)
+
+def accidentsBeforeDate(tree,date):
+    if greaterFunction(date,maxKey(tree)) == 1:
+        return om.keys(tree,minKey(tree),maxKey(tree))
+    elif greaterFunction(date,minKey(tree)) == -1:
+        return None
+    return om.keys(tree,minKey(tree),date)
+
+def listSize(lst):
+    return lt.size(lst)
+
 # ==============================
 # Funciones de Comparacion
 # ==============================

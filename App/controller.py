@@ -25,6 +25,7 @@ from App import model
 import datetime
 import csv
 from DISClib.DataStructures import listiterator as it
+import time
 
 """
 El controlador se encarga de mediar entre la vista y el modelo.
@@ -65,8 +66,8 @@ def loadData(analyzer, accidentsfile):
     p = 0
     for accident in input_file:
         model.addaccident(analyzer, accident)
-        if i%29743 == 0:
-        # if i%8750 == 0:
+        # if i%29743 == 0:
+        if i%8787 == 0:
             print (" " + str(p) + "%" + " completado", end="\r")
             p+=1
 
@@ -94,3 +95,17 @@ def filterSeverityIndividual(tree,date):
         accident = it.next(result)
         severity[accident['Severity']] += 1
     return severity
+
+def accidentBeforeDate(tree,date):
+    result = model.accidentsBeforeDate(tree,date)
+    if result is None:
+        return None
+    total = 0
+    dates = {}
+    iterator1 = it.newIterator(result)
+    while it.hasNext(iterator1):
+        day = it.next(iterator1)
+        accidents = model.getKey(tree,day)
+        dates[day] = model.listSize(accidents)
+        total += model.listSize(accidents)    
+    return (total,dates)
