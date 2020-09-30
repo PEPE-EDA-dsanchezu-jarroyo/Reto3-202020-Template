@@ -78,7 +78,7 @@ while True:
         # print('Altura del arbol: ' + str(controller.indexHeight(cont)))
         # print('Elementos en el arbol: ' + str(controller.indexSize(cont)))
         # print('Menor Llave: ' + str(controller.minKey(cont)))
-        # print('Mayor Llave: ' + str(controller.maxKey(cont)))
+        # print('Mayor Llave: ' + str(conPtroller.maxKey(cont)))
         print("ya acabo esa joda")
         t2=time.process_time()
         print(t2-t1)
