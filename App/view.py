@@ -78,10 +78,11 @@ while True:
 
     elif int(inputs[0]) == 2:
         t1=time.process_time()
-        print("\nCargando información de crimenes ....")
-        controller.loadData(cont, accidentsfile)
+        print("\nCargando información de accidentes ....")
+        controller.load_data_2(cont, accidentsfile)
+        # controller.loadData(cont,accidentsfile)
         t2=time.process_time()
-        print('\n',t2-t1)
+        print('\nTiempo de ejecución:',t2-t1,"segundos")
 
     elif int(inputs[0]) == 3:
         print("\nBuscando accidentes en una fecha:")

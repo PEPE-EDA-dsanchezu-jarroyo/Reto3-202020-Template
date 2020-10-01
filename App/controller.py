@@ -74,6 +74,24 @@ def loadData(analyzer, accidentsfile):
         i+=1
     return analyzer
 
+def load_data_2(analyzer,accidentsfile):
+    """
+    Carga los datos de los archivos CSV en el modelo
+    """
+    i = 0
+    p = 0
+    accidentsfile = cf.data_dir + accidentsfile
+    input_file = csv.DictReader(open(accidentsfile, encoding="utf-8"),delimiter=",")
+    for accident in input_file:
+        model.add_accident2(analyzer,accident)
+        if i%8787 == 0:
+            print (" " + str(p) + "%" + " completado", end="\r")
+            p+=1
+        i+=1
+    return analyzer
+
+
+
 # ___________________________________________________
 #  Funciones para consultas
 # ___________________________________________________

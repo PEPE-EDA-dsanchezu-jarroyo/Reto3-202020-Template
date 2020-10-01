@@ -65,6 +65,22 @@ def addaccident(analyzer, accident):
     updateDateIndex(analyzer['dateIndex'], accident)
     return analyzer
 
+def add_accident2(analyzer,accident):
+    """
+    Añade un nuevo dato al árbol. Si las llaves son iguales no lo actualiza, lo añade a la lista
+    """
+    accident_data = (accident['ID'], accident['Severity'], accident['Start_Time'], accident['End_Time'], accident['Start_Lat'], accident['Start_Lng'], accident['End_Lat'], accident['End_Lng'],accident['Country'],accident['TMC'])
+    lt.addLast(analyzer['accidents'],accident_data)
+    if om.get(analyzer['dateIndex'],accident['Start_Time'][:10]) is None:
+        lst = lt.newList(cmpfunction=greaterFunction)
+        lt.addLast(lst,accident_data)
+        om.put(analyzer['dateIndex'],accident['Start_Time'][:10],lst)
+    else:
+        entry = om.get(analyzer['dateIndex'],accident['Start_Time'][:10])
+        lt.addLast(me.getValue(entry),accident_data)
+    return analyzer
+
+
 def updateDateIndex(map, accident):
     """
     Se toma la fecha del crimen y se busca si ya existe en el arbol
@@ -86,18 +102,6 @@ def updateDateIndex(map, accident):
         # om.put(map,accidentdate2,lst)
     om.put(map, accidentdate, lst)
     return map
-
-def newDataEntry(crime):
-    """
-    Crea una entrada en el indice por fechas, es decir en el arbol
-    binario.
-    """
-    entry = {'offenseIndex': None, 'lstaccidents': None}
-    entry['offenseIndex'] = m.newMap(numelements=30,
-                                     maptype='PROBING',
-                                     comparefunction=greaterFunction)
-    entry['lstaccidents'] = lt.newList('SINGLE_LINKED', greaterFunction)
-    return entry
 
 # ==============================
 # Funciones de consulta
@@ -135,5 +139,12 @@ def greaterFunction(el1,el2):
     elif el1 < el2:
         return -1
     return 0 
-
-
+"""
+map = om.newMap(omaptype='BST',comparefunction=greaterFunction)
+dat1 = lt.newList()
+lt.addLast(dat1,"Val1.1")
+om.put(map,"Key1",dat1)
+print(om.get(map,"Key1"))
+lt.addLast(me.getValue(om.get(map,"Key1"),"Val1.2")
+print(om.get(map,"Key1"))
+"""
