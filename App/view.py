@@ -39,10 +39,10 @@ operación seleccionada.
 # ___________________________________________________
 
 
-accidentsfile = 'us_accidents_dis_2019.csv'
-# accidentsfile = 'us_accidents_small.csv'
+# accidentsfile = 'us_accidents_dis_2019.csv'
+accidentsfile = 'us_accidents_small.csv'
 
-# _________________________________________________us_accidents_small.csv__
+# ___________________________________________________
 #  Menu principal
 # ___________________________________________________
 
@@ -81,6 +81,7 @@ while True:
         print("\nCargando información de crimenes ....")
         controller.loadData(cont, accidentsfile)
         t2=time.process_time()
+        print(cont['dateIndex'])
         print('\n',t2-t1)
 
     elif int(inputs[0]) == 3:

@@ -74,9 +74,10 @@ def updateDateIndex(map, accident):
     Si no se encuentra creado un nodo para esa fecha en el arbol
     se crea y se actualiza el indice de tipos de crimenes
     """
-    accidentdate = accident['Start_Time'][:10]
+    occurreddate = accident['Start_Time']
+    accidentdate = datetime.datetime.strptime(occurreddate, '%Y-%m-%d %H:%M:%S')
     # accidentdate2 = accident['End_Time'][:10]
-    entry = om.get(map, accidentdate)
+    entry = om.get(map, accidentdate.date())
     if entry == None:
         lst=lt.newList()
     else:
@@ -84,20 +85,8 @@ def updateDateIndex(map, accident):
     lt.addLast(lst,accident)
     # if accidentdate != accidentdate2:
         # om.put(map,accidentdate2,lst)
-    om.put(map, accidentdate, lst)
+    om.put(map, accidentdate.date(), lst)
     return map
-
-def newDataEntry(crime):
-    """
-    Crea una entrada en el indice por fechas, es decir en el arbol
-    binario.
-    """
-    entry = {'offenseIndex': None, 'lstaccidents': None}
-    entry['offenseIndex'] = m.newMap(numelements=30,
-                                     maptype='PROBING',
-                                     comparefunction=greaterFunction)
-    entry['lstaccidents'] = lt.newList('SINGLE_LINKED', greaterFunction)
-    return entry
 
 # ==============================
 # Funciones de consulta
