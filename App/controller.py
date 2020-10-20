@@ -67,14 +67,55 @@ def loadData(analyzer, accidentsfile):
     i = 0
     p = 0
     for accident in input_file:
+
         del accident['Description']
+        del accident['Source']
+        del accident['TMC']
+        del accident['Number']
+        del accident['Street']
+        del accident['Side']
+        del accident['City']
+        del accident['County']
+        del accident['Zipcode']
+        del accident['Timezone']
+        del accident['Airport_Code']
+        del accident['Weather_Timestamp']
+        del accident['Temperature(F)']
+        del accident['Wind_Chill(F)']
+        del accident['Humidity(%)']
+        del accident['Pressure(in)']
+        del accident['Visibility(mi)']
+        del accident['Wind_Direction']
+        del accident['Wind_Speed(mph)']
+        del accident['Precipitation(in)']
+        del accident['Weather_Condition']
+        del accident['Amenity']
+        del accident['Bump']
+        del accident['Crossing']
+        del accident['Give_Way']
+        del accident['Junction']
+        del accident['No_Exit']
+        del accident['Railway']
+        del accident['Roundabout']
+        del accident['Station']
+        del accident['Stop']
+        del accident['Traffic_Calming']
+        del accident['Traffic_Signal']
+        del accident['Turning_Loop']
+        del accident['Sunrise_Sunset']
+        del accident['Nautical_Twilight']
+        del accident['Civil_Twilight']
+        del accident['Astronomical_Twilight']
+        del accident['End_Lat']
+        del accident['End_Lng']
+        # print(sys.getsizeof(accident))
         model.addaccident(analyzer, accident)
         # if i%29743 == 0:
-        # if i%8787 == 0:
-            # print (" " + str(p) + "%" + " completado", end="\r")
-            # p+=1
-
+        if i%8787 == 0:
+            print (" " + str(p) + "%" + " completado", end="\r")
+            p+=1
         i+=1
+    # print(sys.getsizeof(analyzer),'Bytes')    
     return analyzer
 
 def load_data_2(analyzer,accidentsfile):
@@ -115,7 +156,7 @@ def filterSeverityIndividual(tree,raw_date):
                 "4":0}
     while it.hasNext(result):
         accident = it.next(result)
-        severity[accident['Severity']] += 1
+        severity[accident['Severity']] += 1 
     return severity
 
 def accidentBeforeDate(tree,raw_date):
@@ -132,3 +173,8 @@ def accidentBeforeDate(tree,raw_date):
         dates[day] = model.listSize(accidents)
         total += model.listSize(accidents)    
     return (total,dates)
+
+def accidentsInRange(tree,low_raw_date,high_raw_date):
+    loDate = datetime.datetime.strptime(low_raw_date, '%Y-%m-%d').date()
+    hiDate = datetime.datetime.strptime(high_raw_date, '%Y-%m-%d').date()
+    return model.accidentsInRange(tree,loDate,hiDate)

@@ -23,7 +23,9 @@ import config
 from DISClib.ADT import list as lt
 from DISClib.ADT import orderedmap as om
 from DISClib.DataStructures import mapentry as me
+from DISClib.DataStructures import listiterator as it
 from DISClib.ADT import map as m
+from DISClib.Algorithms.Trees import traversal as rec
 import datetime
 assert config
 
@@ -127,6 +129,31 @@ def accidentsBeforeDate(tree,date):
         return None
     return om.keys(tree,minKey(tree),date)
 
+def accidentsInRange(tree,loDate,hiDate):
+    inorder_lst = rec.inorder(tree)
+    inorder_it = it.newIterator(inorder_lst)
+    severity = {"1":0,
+                "2":0,
+                "3":0,
+                "4":0}
+    num_accidents = 0
+    while it.hasNext(inorder_it):
+        bucket = it.next(inorder_it)
+        date = datetime.datetime.strptime(bucket['first']['info']['Start_Time'], '%Y-%m-%d %H:%M:%S').date()
+        if date > hiDate:
+            break
+        elif date >= loDate and date <= hiDate:
+            bucket_iterator = it.newIterator(bucket)
+            while it.hasNext(bucket_iterator):
+                element = it.next(bucket_iterator)
+                num_accidents += 1
+                severity[element['Severity']] += 1
+    return (num_accidents,severity)
+        
+
+    
+
+
 def listSize(lst):
     return lt.size(lst)
 
@@ -141,11 +168,12 @@ def greaterFunction(el1,el2):
         return -1
     return 0 
 """
-map = om.newMap(omaptype='BST',comparefunction=greaterFunction)
-dat1 = lt.newList()
-lt.addLast(dat1,"Val1.1")
-om.put(map,"Key1",dat1)
-print(om.get(map,"Key1"))
-lt.addLast(me.getValue(om.get(map,"Key1"),"Val1.2")
-print(om.get(map,"Key1"))
+mapa = om.newMap(comparefunction=greaterFunction)
+om.put(mapa,"key1","val1")
+om.put(mapa,"key2","val2")
+om.put(mapa,"key3","val3")
+om.put(mapa,"key4","val4")
+
+print(type(inorder_sort(mapa)['first']))
+print(inorder_sort(mapa)['first'].keys())
 """

@@ -54,13 +54,19 @@ def printIndividualDayAccident(result):
         print(severity+":",result[severity])
     print("Cantidad de accidentes:",allAccidents)
 
+def printSeverity(severity_dict):
+    print("Severidad de accidentes entre: ",loDate,"-",hiDate)
+    for severity in severity_dict:
+        print(severity+":",severity_dict[severity])
+
 def printMenu():
     print("\n")
     print("Bienvenido")
     print("1- Inicializar Analizador")
     print("2- Cargar información de accidentes")
-    print("3- Requerimento 1")
-    print("4- Requerimento 2")
+    print("3- Conocer accidentes en una fecha (Requerimento 1)")
+    print("4- Conocer accidentes anteriores a una fecha (Requerimento 2)")
+    print("5- Conocer accidentes en un rango de fechas (Requerimento 3)")
     print("0- Salir")
 
 
@@ -79,7 +85,7 @@ while True:
     elif int(inputs[0]) == 2:
         t1=time.process_time()
         print("\nCargando información de accidentes ....")
-        controller.load_data_2(cont, accidentsfile)
+        controller.loadData(cont, accidentsfile)
         # controller.loadData(cont,accidentsfile)
         t2=time.process_time()
         print('\nTiempo de ejecución:',t2-t1,"segundos")
@@ -105,9 +111,20 @@ while True:
             for i in result[1]:
                 if result[1][i] > maxim[1]:
                     maxim = (i,result[1][i])
-            print("Día con más atentados:","{:<12}{:<1}".format(maxim[0]+' -> ',maxim[1]),"atentados")
+            print("Día con más atentados:",maxim[0],'->',maxim[1],"atentados (accidentes)")
         else:
             print("No existen pa esa fecha")
+    
+    elif int(inputs[0]) == 5:
+        print("\n Buscando accidentes en un rango de fechas: ")
+        loDate = input('Por favor ingrese la fecha inferior de la cuál desea buscar los accidentes: (YYYY-MM-DD)\n')
+        hiDate = input('Por favor ingrese la fecha superior de la cuál desea buscar los accidentes: (YYYY-MM-DD)\n')
+        num_accidents, severity = controller.accidentsInRange(cont['dateIndex'],loDate,hiDate)
+        printSeverity(severity)
+        print("Cantidad de accidentes:",num_accidents)
+
+
+
     else:
         sys.exit(0)
 sys.exit(0)
