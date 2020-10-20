@@ -26,6 +26,7 @@ import datetime
 import csv
 from DISClib.DataStructures import listiterator as it
 import time
+import sys
 
 """
 El controlador se encarga de mediar entre la vista y el modelo.
@@ -62,14 +63,16 @@ def loadData(analyzer, accidentsfile):
     accidentsfile = cf.data_dir + accidentsfile
     input_file = csv.DictReader(open(accidentsfile, encoding="utf-8"),
                                 delimiter=",")
+    # print(sys.getsizeof(input_file))
     i = 0
     p = 0
     for accident in input_file:
+        del accident['Description']
         model.addaccident(analyzer, accident)
         # if i%29743 == 0:
-        if i%8787 == 0:
-            print (" " + str(p) + "%" + " completado", end="\r")
-            p+=1
+        # if i%8787 == 0:
+            # print (" " + str(p) + "%" + " completado", end="\r")
+            # p+=1
 
         i+=1
     return analyzer
@@ -102,7 +105,8 @@ def keyset (map):
 def getAccident(tree,key):
     return model.getKey(tree,key)
 
-def filterSeverityIndividual(tree,date):
+def filterSeverityIndividual(tree,raw_date):
+    date = datetime.datetime.strptime(raw_date, '%Y-%m-%d').date()
     lst_result = getAccident(tree,date)
     result = it.newIterator(lst_result)
     severity = {"1":0,
@@ -114,7 +118,8 @@ def filterSeverityIndividual(tree,date):
         severity[accident['Severity']] += 1
     return severity
 
-def accidentBeforeDate(tree,date):
+def accidentBeforeDate(tree,raw_date):
+    date = datetime.datetime.strptime(raw_date, '%Y-%m-%d').date()
     result = model.accidentsBeforeDate(tree,date)
     if result is None:
         return None

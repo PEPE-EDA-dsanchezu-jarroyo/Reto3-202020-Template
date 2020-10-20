@@ -39,10 +39,10 @@ operación seleccionada.
 # ___________________________________________________
 
 
-accidentsfile = 'us_accidents_dis_2019.csv'
-# accidentsfile = 'us_accidents_small.csv'
+# accidentsfile = 'us_accidents_dis_2019.csv'
+accidentsfile = 'us_accidents_small.csv'
 
-# _________________________________________________us_accidents_small.csv__
+# ___________________________________________________
 #  Menu principal
 # ___________________________________________________
 
