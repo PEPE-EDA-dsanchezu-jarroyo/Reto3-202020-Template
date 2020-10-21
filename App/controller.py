@@ -118,23 +118,6 @@ def loadData(analyzer, accidentsfile):
     # print(sys.getsizeof(analyzer),'Bytes')    
     return analyzer
 
-def load_data_2(analyzer,accidentsfile):
-    """
-    Carga los datos de los archivos CSV en el modelo
-    """
-    i = 0
-    p = 0
-    accidentsfile = cf.data_dir + accidentsfile
-    input_file = csv.DictReader(open(accidentsfile, encoding="utf-8"),delimiter=",")
-    for accident in input_file:
-        model.add_accident2(analyzer,accident)
-        if i%8787 == 0:
-            print (" " + str(p) + "%" + " completado", end="\r")
-            p+=1
-        i+=1
-    return analyzer
-
-
 
 # ___________________________________________________
 #  Funciones para consultas
@@ -177,4 +160,17 @@ def accidentBeforeDate(tree,raw_date):
 def accidentsInRange(tree,low_raw_date,high_raw_date):
     loDate = datetime.datetime.strptime(low_raw_date, '%Y-%m-%d').date()
     hiDate = datetime.datetime.strptime(high_raw_date, '%Y-%m-%d').date()
-    return model.accidentsInRange(tree,loDate,hiDate)
+    num_accidents = 0
+    severity = {"1":0,
+                "2":0,
+                "3":0,
+                "4":0}
+    lst_accidents_iterator = it.newIterator(model.range_accidents(tree,loDate,hiDate))
+    while it.hasNext(lst_accidents_iterator):
+        bucket = it.next(lst_accidents_iterator)
+        bucket_iterator = it.newIterator(bucket)
+        while it.hasNext(bucket_iterator):
+            element = it.next(bucket_iterator)
+            num_accidents += 1
+            severity[element['Severity']] += 1
+    return (num_accidents,severity)

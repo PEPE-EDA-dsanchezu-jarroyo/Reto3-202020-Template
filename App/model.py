@@ -67,21 +67,6 @@ def addaccident(analyzer, accident):
     updateDateIndex(analyzer['dateIndex'], accident)
     return analyzer
 
-def add_accident2(analyzer,accident):
-    """
-    Añade un nuevo dato al árbol. Si las llaves son iguales no lo actualiza, lo añade a la lista
-    """
-    accident_data = (accident['ID'], accident['Severity'], accident['Start_Time'], accident['End_Time'], accident['Start_Lat'], accident['Start_Lng'], accident['End_Lat'], accident['End_Lng'],accident['Country'],accident['TMC'])
-    lt.addLast(analyzer['accidents'],accident_data)
-    if om.get(analyzer['dateIndex'],accident['Start_Time'][:10]) is None:
-        lst = lt.newList(cmpfunction=greaterFunction)
-        lt.addLast(lst,accident_data)
-        om.put(analyzer['dateIndex'],accident['Start_Time'][:10],lst)
-    else:
-        entry = om.get(analyzer['dateIndex'],accident['Start_Time'][:10])
-        lt.addLast(me.getValue(entry),accident_data)
-    return analyzer
-
 
 def updateDateIndex(map, accident):
     """
@@ -123,36 +108,25 @@ def maxKey(tree):
     return om.maxKey(tree)
 
 def accidentsBeforeDate(tree,date):
+    """
+    Retorna los
+    """
     if greaterFunction(date,maxKey(tree)) == 1:
         return om.keys(tree,minKey(tree),maxKey(tree))
     elif greaterFunction(date,minKey(tree)) == -1:
         return None
     return om.keys(tree,minKey(tree),date)
 
-def accidentsInRange(tree,loDate,hiDate):
+def accidents_range(tree,loKey,hiKey):
+    """
+    Retorna un rango de accidentes ocurridos entre dos llaves
+    """
+    lst = lt.newList(cmpfunction=greaterFunction)
     inorder_lst = rec.inorder(tree)
     inorder_it = it.newIterator(inorder_lst)
-    severity = {"1":0,
-                "2":0,
-                "3":0,
-                "4":0}
-    num_accidents = 0
-    while it.hasNext(inorder_it):
-        bucket = it.next(inorder_it)
-        date = datetime.datetime.strptime(bucket['first']['info']['Start_Time'], '%Y-%m-%d %H:%M:%S').date()
-        if date > hiDate:
-            break
-        elif date >= loDate and date <= hiDate:
-            bucket_iterator = it.newIterator(bucket)
-            while it.hasNext(bucket_iterator):
-                element = it.next(bucket_iterator)
-                num_accidents += 1
-                severity[element['Severity']] += 1
-    return (num_accidents,severity)
-        
 
-    
-
+def range_accidents(tree,loKey,hiKey):
+    return om.values(tree,loKey,hiKey)
 
 def listSize(lst):
     return lt.size(lst)
