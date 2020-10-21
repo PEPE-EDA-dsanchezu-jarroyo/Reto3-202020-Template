@@ -108,6 +108,7 @@ def loadData(analyzer, accidentsfile):
         del accident['Astronomical_Twilight']
         del accident['End_Lat']
         del accident['End_Lng']
+        del accident['End_Time']
         # print(sys.getsizeof(accident))
         model.addaccident(analyzer, accident)
         # if i%29743 == 0:
@@ -190,7 +191,7 @@ def accidentBeforeDate(tree,raw_date):
         total += model.listSize(accidents)    
     return (total,dates)
 
-def accidentsInRange(tree,low_raw_date,high_raw_date):
+def accidentsInDateRange(tree,low_raw_date,high_raw_date):
     loDate = datetime.datetime.strptime(low_raw_date, '%Y-%m-%d').date()
     hiDate = datetime.datetime.strptime(high_raw_date, '%Y-%m-%d').date()
     num_accidents = 0
@@ -207,6 +208,31 @@ def accidentsInRange(tree,low_raw_date,high_raw_date):
             num_accidents += 1
             severity[element['Severity']] += 1
     return (num_accidents,severity)
+
+def accidents4state(tree,low_raw_date,high_raw_date):
+    loDate = datetime.datetime.strptime(low_raw_date, '%Y-%m-%d').date()
+    hiDate = datetime.datetime.strptime(high_raw_date, '%Y-%m-%d').date()
+    date_range = model.range_accidents(tree,loDate,hiDate)
+    max_accidents = [0,'']
+    date_iterator = it.newIterator(date_range)
+    states = {}
+    while it.hasNext(date_iterator):
+        accidents_lst = it.next(date_iterator)
+        num_accidents = model.listSize(accidents_lst)
+        if num_accidents > max_accidents[0]:
+            max_accidents[0] = num_accidents
+            max_accidents[1] = datetime.datetime.strptime(accidents_lst['first']['info']['Start_Time'], '%Y-%m-%d %H:%M:%S').date()
+        
+        accidents_lst_it = it.newIterator(accidents_lst)
+        while it.hasNext(accidents_lst_it):
+            accident = it.next(accidents_lst_it)
+            if accident['State'] not in states:
+                states[accident['State']] = 1
+            else:
+                states[accident['State']] += 1
+    return (max_accidents[1],max_accidents[0],states)
+
+    
 def accidentsrangetime(tree,time1,time2):
     result=model.values(tree,'05:46:00','06:07:59')
     print(result)

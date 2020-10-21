@@ -138,6 +138,7 @@ def crimesSize(analyzer):
     Número de libros en el catago
     """
     return lt.size(analyzer['accidents'])
+    
 def range_accidents(tree,loKey,hiKey):
     return om.values(tree,loKey,hiKey)
 
