@@ -132,10 +132,6 @@ while True:
         print("Cantidad de accidentes:",num_accidents)
 
 
-            print("Día con más atentados:","{:<12}{:<1}".format(maxim[0]+' -> ',maxim[1]),"atentados")
-        else:
-            print("No existen pa esa fecha")
-
     elif int(inputs[0]) == 6:
         print("\nBuscando accidentes en una fecha:")
         date1 = input('Por favor ingrese la fecha inicial de la cuál desea buscar los accidentes: (YYYY-MM-DD)\n')
