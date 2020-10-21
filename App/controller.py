@@ -143,7 +143,8 @@ def accidentBeforeDate(tree,date):
     return (total,dates)
 
 def accidentsrangetime(tree,time1,time2):
-    result=model.values(tree,time1,time2)
+    result=model.values(tree,'05:46:00','06:07:59')
+    print(result)
     # if result is None:
     #     return None
     # total = 0

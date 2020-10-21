@@ -128,8 +128,8 @@ while True:
 
     elif int(inputs[0]) == 6:
         print("\nBuscando accidentes en una fecha:")
-        date = input('Por favor ingrese la fecha inicial de la cuál desea buscar los accidentes: (YYYY-MM-DD)\n')
-        date = input('Por favor ingrese la fecha final de la cuál desea buscar los accidentes: (YYYY-MM-DD)\n')
+        date1 = input('Por favor ingrese la fecha inicial de la cuál desea buscar los accidentes: (YYYY-MM-DD)\n')
+        date2 = input('Por favor ingrese la fecha final de la cuál desea buscar los accidentes: (YYYY-MM-DD)\n')
     
         severity = controller.filterSeverityIndividual(cont['dateIndex'],date)
         printIndividualDayAccident(severity)
