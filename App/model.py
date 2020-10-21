@@ -50,11 +50,14 @@ def newAnalyzer():
     Retorna el analizador inicializado.
     """
     analyzer = {'accidents': None,
-                'dateIndex': None
+                'dateIndex': None,
+                'hourindex': None
                 }
 
-    analyzer['accidents'] = lt.newList('SINGLE_LINKED', greaterFunction)
-    analyzer['dateIndex'] = om.newMap(omaptype='BST',
+    analyzer['accidents'] = lt.newList('SINGLE_LINKED',greaterFunction)
+    analyzer['dateIndex'] = om.newMap(omaptype='RBT',
+                                      comparefunction=greaterFunction)
+    analyzer['hourindex'] = om.newMap(omaptype='RBT',
                                       comparefunction=greaterFunction)
     return analyzer
 
@@ -64,7 +67,7 @@ def addaccident(analyzer, accident):
     """
     """
     lt.addLast(analyzer['accidents'], accident)
-    updateDateIndex(analyzer['dateIndex'], accident)
+    updateDateIndex(analyzer, accident)
     return analyzer
 
 
@@ -77,19 +80,42 @@ def updateDateIndex(map, accident):
     Si no se encuentra creado un nodo para esa fecha en el arbol
     se crea y se actualiza el indice de tipos de crimenes
     """
+
     occurreddate = accident['Start_Time']
     accidentdate = datetime.datetime.strptime(occurreddate, '%Y-%m-%d %H:%M:%S')
-    # accidentdate2 = accident['End_Time'][:10]
-    entry = om.get(map, accidentdate.date())
-    if entry == None:
-        lst=lt.newList()
+
+    entrydate = om.get(map['dateIndex'], str(accidentdate.date()))
+    entryhour = om.get(map['hourindex'], str(accidentdate.time()))
+
+    if entrydate == None:
+        lstdate=lt.newList()
     else:
-        lst=me.getValue(entry)
-    lt.addLast(lst,accident)
-    # if accidentdate != accidentdate2:
-        # om.put(map,accidentdate2,lst)
-    om.put(map, accidentdate.date(), lst)
+        lstdate=me.getValue(entrydate)
+
+    if entryhour == None:
+        lsthour=lt.newList()
+    else:
+        lsthour=me.getValue(entryhour)
+
+    lt.addLast(lsthour,accident)
+    lt.addLast(lstdate,accident)
+
+    om.put(map['dateIndex'], str(accidentdate.date()), lstdate)
+    om.put(map['hourindex'], str(accidentdate.time()), lsthour)
+
     return map
+
+def newDataEntry(crime):
+    """
+    Crea una entrada en el indice por fechas, es decir en el arbol
+    binario.
+    """
+    entry = {'offenseIndex': None, 'lstaccidents': None}
+    entry['offenseIndex'] = m.newMap(numelements=30,
+                                     maptype='PROBING',
+                                     comparefunction=greaterFunction)
+    entry['lstaccidents'] = lt.newList('SINGLE_LINKED', greaterFunction)
+    return entry
 
 # ==============================
 # Funciones de consulta
@@ -107,26 +133,51 @@ def minKey(tree):
 def maxKey(tree):
     return om.maxKey(tree)
 
+
+def range_accidents(tree,loKey,hiKey):
+    return om.values(tree,loKey,hiKey)
+
+def indexHeight(analyzer):
+    """Numero de autores leido
+    """
+    return om.height(analyzer['dateIndex'])
+
+def indexSize(analyzer):
+    """Numero de autores leido
+    """
+    return om.size(analyzer['dateIndex'])
+
+
+def minKey(analyzer):
+    """Numero de autores leido
+    """
+    return om.minKey(analyzer)
+
+
+def maxKey(analyzer):
+    """Numero de autores leido
+    """
+    return om.maxKey(analyzer)
+
+def keyset(map):
+    return m.keySet(map)
+
+def getKey(tree,key):
+    return me.getValue(om.get(tree,key))
+
+def getkey2(tree,key):
+    return om.get(tree,key)
+
+def values(tree, key1, key2):
+    return om.values(tree,key1,key2)
+
 def accidentsBeforeDate(tree,date):
-    """
-    Retorna los
-    """
     if greaterFunction(date,maxKey(tree)) == 1:
         return om.keys(tree,minKey(tree),maxKey(tree))
     elif greaterFunction(date,minKey(tree)) == -1:
         return None
     return om.keys(tree,minKey(tree),date)
 
-def accidents_range(tree,loKey,hiKey):
-    """
-    Retorna un rango de accidentes ocurridos entre dos llaves
-    """
-    lst = lt.newList(cmpfunction=greaterFunction)
-    inorder_lst = rec.inorder(tree)
-    inorder_it = it.newIterator(inorder_lst)
-
-def range_accidents(tree,loKey,hiKey):
-    return om.values(tree,loKey,hiKey)
 
 def listSize(lst):
     return lt.size(lst)
@@ -135,19 +186,11 @@ def listSize(lst):
 # Funciones de Comparacion
 # ==============================
 
-def greaterFunction(el1,el2):
-    if el1 > el2:
+def greaterFunction(el1 ,el2):
+    if str(el1) > str(el2):
         return 1
-    elif el1 < el2:
+    elif str(el1) < str(el2):
         return -1
     return 0 
-"""
-mapa = om.newMap(comparefunction=greaterFunction)
-om.put(mapa,"key1","val1")
-om.put(mapa,"key2","val2")
-om.put(mapa,"key3","val3")
-om.put(mapa,"key4","val4")
 
-print(type(inorder_sort(mapa)['first']))
-print(inorder_sort(mapa)['first'].keys())
-"""
+

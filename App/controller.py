@@ -112,6 +112,7 @@ def loadData(analyzer, accidentsfile):
         model.addaccident(analyzer, accident)
         # if i%29743 == 0:
         if i%8787 == 0:
+        #if i%30000 == 0:
             print (" " + str(p) + "%" + " completado", end="\r")
             p+=1
         i+=1
@@ -122,7 +123,39 @@ def loadData(analyzer, accidentsfile):
 # ___________________________________________________
 #  Funciones para consultas
 # ___________________________________________________
+def crimesSize(analyzer):
+    """
+    Numero de crimenes leidos
+    """
+    return model.crimesSize(analyzer)
 
+
+def indexHeight(analyzer):
+    """
+    Altura del indice (arbol)
+    """
+    return model.indexHeight(analyzer)
+
+
+def indexSize(analyzer):
+    """
+    Numero de nodos en el arbol
+    """
+    return model.indexSize(analyzer)
+
+
+def minKey(analyzer):
+    """
+    La menor llave del arbol
+    """
+    return model.minKey(analyzer)
+
+
+def maxKey(analyzer):
+    """
+    La mayor llave del arbol
+    """
+    return model.maxKey(analyzer)
 def keyset (map):
     return model.keyset(map)
 
@@ -174,3 +207,20 @@ def accidentsInRange(tree,low_raw_date,high_raw_date):
             num_accidents += 1
             severity[element['Severity']] += 1
     return (num_accidents,severity)
+def accidentsrangetime(tree,time1,time2):
+    result=model.values(tree,'05:46:00','06:07:59')
+    print(result)
+    # if result is None:
+    #     return None
+    # total = 0
+    # dates = {}
+    # iterator1 = it.newIterator(result)
+    # while it.hasNext(iterator1):
+    #     day = it.next(iterator1)
+    #     accidents = model.getkey2(tree,day)
+    #     dates[day] = model.listSize(accidents)
+    #     total += model.listSize(accidents)    
+    # return (total,dates)
+
+def accidentsrangedate(tree,date1,date2):
+    result=model.values(tree,date1,date2)
