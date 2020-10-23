@@ -69,6 +69,17 @@ def printStates(state_dict):
             max_state[1] = state
     return (max_state[0],max_state[1])
 
+def printReq6(result):
+    print("{:<15}{:<15}".format("Lunes",result[1][0]))
+    print("{:<15}{:<15}".format("Martes",result[1][1]))
+    print("{:<15}{:<15}".format("Miércoles",result[1][2]))
+    print("{:<15}{:<15}".format("Jueves",result[1][3]))
+    print("{:<15}{:<15}".format("Viernes",result[1][4]))
+    print("{:<15}{:<15}".format("Sábado",result[1][5]))
+    print("{:<15}{:<15}".format("Domingo",result[1][6]))
+    print()
+    print("El total de accidentes en el área indicada es:",result[0],"accidentes")
+
 def printMenu():
     print("\n")
     print("Bienvenido")
@@ -169,10 +180,11 @@ while True:
     
     elif int(inputs[0]) == 8:
         print("\nBuscando accidentes en una fecha:")
-        date = input('Por favor ingrese la fecha inicial de la cuál desea buscar los accidentes: (YYYY-MM-DD)\n')
-        date = input('Por favor ingrese la fecha final de la cuál desea buscar los accidentes: (YYYY-MM-DD)\n')
-
-        severity = controller.filterSeverityIndividual(cont['dateIndex'],date)
+        lat = float(input('Por favor ingrese la latitud del centro: \n'))
+        lon = float(input('Por favor ingrese la longitud del centro: \n'))
+        radius = float(input('Por favor ingrese el radio que quiere buscar: \n'))
+        result = controller.filter_distance(cont['accidents'],lon,lat,radius)
+        printReq6(result)
             
    
     elif int(inputs[0]) == 9:

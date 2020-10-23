@@ -26,6 +26,7 @@ import datetime
 import csv
 from DISClib.DataStructures import listiterator as it
 import time
+from math import radians
 import sys
 
 """
@@ -236,17 +237,21 @@ def accidents4state(tree,low_raw_date,high_raw_date):
 def accidentsrangetime(tree,time1,time2):
     result=model.values(tree,'05:46:00','06:07:59')
     print(result)
-    # if result is None:
-    #     return None
-    # total = 0
-    # dates = {}
-    # iterator1 = it.newIterator(result)
-    # while it.hasNext(iterator1):
-    #     day = it.next(iterator1)
-    #     accidents = model.getkey2(tree,day)
-    #     dates[day] = model.listSize(accidents)
-    #     total += model.listSize(accidents)    
-    # return (total,dates)
 
 def accidentsrangedate(tree,date1,date2):
     result=model.values(tree,date1,date2)
+
+def filter_distance(lst,lon,lat,radius):
+    all_data_iterator = it.newIterator(lst)
+    total = 0
+    days = [0,0,0,0,0,0,0]
+    while it.hasNext(all_data_iterator):
+        accident = it.next(all_data_iterator)
+        distance = model.distance_lat_lon(radians(lon),radians(lat),radians(float(accident['Start_Lng'])),radians(float(accident['Start_Lat'])))
+        if abs(distance) <= radius:
+            accidentdate = datetime.datetime.strptime(accident['Start_Time'], '%Y-%m-%d %H:%M:%S')
+            total += 1
+            days[accidentdate.weekday()] += 1
+
+    return (total,days)
+            
