@@ -63,6 +63,26 @@ def newAnalyzer():
 
 # Funciones para agregar informacion al catalogo
 
+def RedondearHoras(time1):
+    
+    minutos=int(time1.minute)
+    horas=int(time1.hour)
+
+    if minutos < 15:
+        minutos=00
+    elif minutos <= 45 and minutos >= 30:
+        minutos=30
+    else:
+        minutos=00
+        horas+=1
+        if horas==24:
+            horas=0
+    time1=datetime.time.replace(time1, hour=horas)
+    time1=datetime.time.replace(time1, minute=minutos)
+    time1=datetime.time.replace(time1, second=00)
+    
+    return time1
+
 def addaccident(analyzer, accident):
     """
     """
@@ -70,7 +90,13 @@ def addaccident(analyzer, accident):
     updateDateIndex(analyzer, accident)
     return analyzer
 
-
+def strtotimedate(str,mode):
+    if mode=='full':
+        return datetime.datetime.strptime(str, '%Y-%m-%d %H:%M:%S')
+    elif mode=='time':
+        return datetime.datetime.strptime(str, '%H:%M:%S').time()
+    elif mode =='date':
+        return datetime.datetime.strptime(str, '%Y-%m-%d').date()
 def updateDateIndex(map, accident):
     """
     Se toma la fecha del crimen y se busca si ya existe en el arbol
@@ -82,10 +108,11 @@ def updateDateIndex(map, accident):
     """
 
     occurreddate = accident['Start_Time']
-    accidentdate = datetime.datetime.strptime(occurreddate, '%Y-%m-%d %H:%M:%S')
-
+    accidentdate = strtotimedate(occurreddate,'full')
     entrydate = om.get(map['dateIndex'], str(accidentdate.date()))
-    entryhour = om.get(map['hourindex'], str(accidentdate.time()))
+
+    entryhourround=RedondearHoras(accidentdate.time())
+    entryhour = om.get(map['hourindex'], str(entryhourround))
 
     if entrydate == None:
         lstdate=lt.newList()
@@ -100,8 +127,8 @@ def updateDateIndex(map, accident):
     lt.addLast(lsthour,accident)
     lt.addLast(lstdate,accident)
 
-    om.put(map['dateIndex'], str(accidentdate.date()), lstdate)
-    om.put(map['hourindex'], str(accidentdate.time()), lsthour)
+    om.put(map['dateIndex'], accidentdate.date(), lstdate)
+    om.put(map['hourindex'], entryhourround, lsthour)
 
     return map
 
@@ -121,8 +148,7 @@ def newDataEntry(crime):
 # Funciones de consulta
 # ==============================
 
-def keyset(map):
-    return m.keySet(map)
+
 
 def getKey(tree,key):
     return me.getValue(om.get(tree,key))
@@ -164,7 +190,7 @@ def maxKey(analyzer):
     return om.maxKey(analyzer)
 
 def keyset(map):
-    return m.keySet(map)
+    return om.keySet(map)
 
 def getKey(tree,key):
     return me.getValue(om.get(tree,key))
@@ -174,6 +200,9 @@ def getkey2(tree,key):
 
 def values(tree, key1, key2):
     return om.values(tree,key1,key2)
+
+def valueset(tree):
+    return om.valueSet(tree)
 
 def accidentsBeforeDate(tree,date):
     if greaterFunction(date,maxKey(tree)) == 1:

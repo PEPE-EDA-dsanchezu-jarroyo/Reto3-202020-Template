@@ -208,19 +208,37 @@ def accidentsInRange(tree,low_raw_date,high_raw_date):
             severity[element['Severity']] += 1
     return (num_accidents,severity)
 def accidentsrangetime(tree,time1,time2):
-    result=model.values(tree,'05:46:00','06:07:59')
-    print(result)
-    # if result is None:
-    #     return None
-    # total = 0
-    # dates = {}
-    # iterator1 = it.newIterator(result)
-    # while it.hasNext(iterator1):
-    #     day = it.next(iterator1)
-    #     accidents = model.getkey2(tree,day)
-    #     dates[day] = model.listSize(accidents)
-    #     total += model.listSize(accidents)    
-    # return (total,dates)
+    # time1='05:46:00'
+    # time2='06:07:59'
 
-def accidentsrangedate(tree,date1,date2):
-    result=model.values(tree,date1,date2)
+    time1=model.strtotimedate(time1,'time')
+    time2=model.strtotimedate(time2,'time')
+    time1=model.RedondearHoras(time1)
+    time2=model.RedondearHoras(time2)
+
+    result=model.values(tree,time1,time2)
+
+
+    if result is None:
+        return None
+    
+    total=0
+    severity = {"1":0,
+                "2":0,
+                "3":0,
+                "4":0}
+    iterator1=it.newIterator(result)
+    while it.hasNext(iterator1):
+        lst=it.newIterator(it.next(iterator1))
+        while it.hasNext(lst):
+            total+=1
+            severity[it.next(lst)['Severity']] += 1
+
+    return (total, severity)
+
+
+
+
+
+
+

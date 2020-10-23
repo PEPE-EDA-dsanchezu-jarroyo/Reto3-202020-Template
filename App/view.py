@@ -60,6 +60,11 @@ def printSeverity(severity_dict):
     print("Severidad de accidentes entre: ",loDate,"-",hiDate)
     for severity in severity_dict:
         print(severity+":",severity_dict[severity])
+def printhorasinrange(total,severity_dict):
+    print('el total de accidentes entre fue '+str(total))
+    for severidad in severity_dict:
+        print(severidad+":",severity_dict[severidad],str(round((severity_dict[severidad]/total)*100,2))+'%')
+
 
 def printMenu():
     print("\n")
@@ -146,16 +151,10 @@ while True:
         date1 = input('Por favor ingrese la hora inicial de la cuál desea buscar los accidentes: (YYYY-MM-DD)\n')
         date2 = input('Por favor ingrese la hora final de la cuál desea buscar los accidentes: (YYYY-MM-DD)\n')
 
-        result = controller.accidentsrangetime(cont['hourindex'],date1, date2)
-        if result is not None:
-            print("El total de accidentes entre las",date1,"y las",date2,"es:",result[0])
-            maxim = (0,0)
-            for i in result[1]:
-                if result[1][i] > maxim[1]:
-                    maxim = (i,result[1][i])
-            print("El momento con mas antentados del rango es:","{:<12}{:<1}".format(maxim[0]+' -> ',maxim[1]),"atentados")
-        else:
-            print("No existen pa esa fecha")
+        total,severity = controller.accidentsrangetime(cont['hourindex'],date1, date2)
+
+        printhorasinrange(total,severity)
+       
     
     elif int(inputs[0]) == 8:
         print("\nBuscando accidentes en una fecha:")
