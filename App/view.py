@@ -38,11 +38,9 @@ operación seleccionada.
 #  Ruta a los archivos
 # ___________________________________________________
 
-
+accidentsfile = 'us_accidents_small.csv'
 # accidentsfile = 'us_accidents_dis_2019.csv'
 #accidentsfile = 'US_Accidents_Dec19.csv'
-
-accidentsfile = 'us_accidents_small.csv'
 
 # ___________________________________________________
 #  Menu principal
@@ -57,7 +55,7 @@ def printIndividualDayAccident(result):
     print("Cantidad de accidentes:",allAccidents)
 
 def printSeverity(severity_dict):
-    print("Severidad de accidentes entre: ",loDate,"-",hiDate)
+    print("Severidad de accidentes entre: ",loDate,"y",hiDate)
     for severity in severity_dict:
         print(severity+":",severity_dict[severity])
 
@@ -66,6 +64,26 @@ def printhorasinrange(total,severity_dict):
     for severidad in severity_dict:
         print("{:<5}{:<7}{:<7}".format(severidad+":",str(severity_dict[severidad]),str(round((severity_dict[severidad]/total)*100,2))+'%'))
 
+def printStates(state_dict):
+    print("Accidentes por estado entre: ",loDate,"y",hiDate)
+    max_state = [0,'']
+    for state in state_dict:
+        print("{:<5}{:<5}".format(state,state_dict[state]))
+        if state_dict[state] > max_state[0]:
+            max_state[0] = state_dict[state]
+            max_state[1] = state
+    return (max_state[0],max_state[1])
+
+def printReq6(result):
+    print("{:<15}{:<15}".format("Lunes",result[1][0]))
+    print("{:<15}{:<15}".format("Martes",result[1][1]))
+    print("{:<15}{:<15}".format("Miércoles",result[1][2]))
+    print("{:<15}{:<15}".format("Jueves",result[1][3]))
+    print("{:<15}{:<15}".format("Viernes",result[1][4]))
+    print("{:<15}{:<15}".format("Sábado",result[1][5]))
+    print("{:<15}{:<15}".format("Domingo",result[1][6]))
+    print()
+    print("El total de accidentes en el área indicada es:",result[0],"accidentes")
 
 def printMenu():
     print("\n")
@@ -133,19 +151,21 @@ while True:
         print("\n Buscando accidentes en un rango de fechas: ")
         loDate = input('Por favor ingrese la fecha inferior de la cuál desea buscar los accidentes: (YYYY-MM-DD)\n')
         hiDate = input('Por favor ingrese la fecha superior de la cuál desea buscar los accidentes: (YYYY-MM-DD)\n')
-        num_accidents, severity = controller.accidentsInRange(cont['dateIndex'],loDate,hiDate)
+        num_accidents, severity = controller.accidentsInDateRange(cont['dateIndex'],loDate,hiDate)
         printSeverity(severity)
         print("Cantidad de accidentes:",num_accidents)
 
 
     elif int(inputs[0]) == 6:
-        print("\nBuscando accidentes en una fecha:")
-        date1 = input('Por favor ingrese la fecha inicial de la cuál desea buscar los accidentes: (YYYY-MM-DD)\n')
-        date2 = input('Por favor ingrese la fecha final de la cuál desea buscar los accidentes: (YYYY-MM-DD)\n')
-    
-        severity = controller.filterSeverityIndividual(cont['dateIndex'],date)
-        printIndividualDayAccident(severity)
-       
+        print("\nFiltrando accidentes por estado:")
+        loDate = input('Por favor ingrese la fecha inferior de la cuál desea buscar los accidentes: (YYYY-MM-DD)\n')
+        hiDate = input('Por favor ingrese la fecha superior de la cuál desea buscar los accidentes: (YYYY-MM-DD)\n')
+        max_accidents_date, num_accidents, states_dict_result = controller.accidents4state(cont['dateIndex'],loDate,hiDate)
+        num_max_state, max_state = printStates(states_dict_result)
+        print()
+        print("El estado con más accidentes entre las fechas es:",max_state,"con",num_max_state,"atentados (accidentes)")       
+        print("El día con más accidentes entre las dos fechas es:",max_accidents_date,"con",num_accidents,"atentados (accidentes)")
+
 
     elif int(inputs[0]) == 7:
         print("\nBuscando accidentes en una fecha:")
@@ -159,10 +179,11 @@ while True:
     
     elif int(inputs[0]) == 8:
         print("\nBuscando accidentes en una fecha:")
-        date = input('Por favor ingrese la fecha inicial de la cuál desea buscar los accidentes: (YYYY-MM-DD)\n')
-        date = input('Por favor ingrese la fecha final de la cuál desea buscar los accidentes: (YYYY-MM-DD)\n')
-
-        severity = controller.filterSeverityIndividual(cont['dateIndex'],date)
+        lat = float(input('Por favor ingrese la latitud del centro: \n'))
+        lon = float(input('Por favor ingrese la longitud del centro: \n'))
+        radius = float(input('Por favor ingrese el radio que quiere buscar: \n'))
+        result = controller.filter_distance(cont['accidents'],lon,lat,radius)
+        printReq6(result)
             
    
     elif int(inputs[0]) == 9:

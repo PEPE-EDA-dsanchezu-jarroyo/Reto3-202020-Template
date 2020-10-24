@@ -27,6 +27,7 @@ from DISClib.DataStructures import listiterator as it
 from DISClib.ADT import map as m
 from DISClib.Algorithms.Trees import traversal as rec
 import datetime
+import  math
 assert config
 
 """
@@ -51,7 +52,8 @@ def newAnalyzer():
     """
     analyzer = {'accidents': None,
                 'dateIndex': None,
-                'hourindex': None
+                'hourindex': None,
+                'posMatrix': None
                 }
 
     analyzer['accidents'] = lt.newList('SINGLE_LINKED',greaterFunction)
@@ -144,6 +146,16 @@ def newDataEntry(crime):
     entry['lstaccidents'] = lt.newList('SINGLE_LINKED', greaterFunction)
     return entry
 
+def distance_lat_lon(lon1,lat1,lon2,lat2):
+    delta_lon = lon2-lon1
+    delta_lat = lat2-lat1
+
+    alpha = math.sin(delta_lat/2)**2 + math.cos(lat1) * math.cos(lat2) * math.sin(delta_lon/2)**2
+
+    distance = 2*math.asin(math.sqrt(alpha)) * 3956
+
+    return distance
+
 # ==============================
 # Funciones de consulta
 # ==============================
@@ -164,6 +176,7 @@ def crimesSize(analyzer):
     Número de libros en el catago
     """
     return lt.size(analyzer['accidents'])
+    
 def range_accidents(tree,loKey,hiKey):
     return om.values(tree,loKey,hiKey)
 
